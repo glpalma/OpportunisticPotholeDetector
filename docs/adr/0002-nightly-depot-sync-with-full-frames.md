@@ -1,7 +1,7 @@
 # ADR-0002: Nightly depot sync, full-frame images per Sighting
 
 ## Status
-Accepted
+Accepted. Amended by [ADR-0010](./0010-background-jobs-and-thumbnails.md) ("no thumbnails" applies to the Client; the Backend derives display thumbnails) and [ADR-0011](./0011-privacy-and-photo-retention.md) (image retention).
 
 ## Context
 Clients are mounted on buses. Buses have no mobile data plan and no cellular

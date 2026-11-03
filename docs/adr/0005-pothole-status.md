@@ -1,7 +1,7 @@
 # ADR-0005: Pothole status is open, fixed, or resunk
 
 ## Status
-Accepted
+Accepted. The resunk rule is amended by [ADR-0009](./0009-pothole-clustering-position-locking-late-sightings.md) (late Sightings captured before the Pothole was presumed fixed reopen it instead of marking it resunk).
 
 ## Context
 A Pothole that stops receiving Sightings might have been repaired, or the

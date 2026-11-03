@@ -1,7 +1,7 @@
 # ADR-0004: Spring Boot backend, Angular dashboard
 
 ## Status
-Accepted
+Accepted. The Client runs on an rk322x TV box, not a Pi ([ADR-0006](./0006-client-hardware-rk322x-tv-box.md)). Database chosen in [ADR-0008](./0008-postgres-schema-and-image-storage.md); map library chosen in [ADR-0014](./0014-dashboard-design.md).
 
 ## Context
 The backend and dashboard stacks were unset. For a POC whose HTTP surface
