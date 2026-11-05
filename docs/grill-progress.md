@@ -45,10 +45,20 @@ for architectural decisions. Short summary of what's locked in:
    See [ADR-0004](./adr/0004-spring-boot-and-angular.md).
 8. **Pothole status:** stored `open`, `fixed`, or `resunk`. Neglected is
    derived (open, and the first `capturedAt` is past the neglect window).
-   Silence → fixed uses `capturedAt` and a 30-day window. Fixed → resunk
+   Silence → fixed uses `capturedAt` and the silence window. Fixed → resunk
    happens when a new Sighting attaches. Neglected means `open` and the
-   first `capturedAt` is 30 days ago or older. Rows are not deleted by age.
+   first `capturedAt` is past the neglect window. Rows are not deleted by age.
    See [ADR-0005](./adr/0005-pothole-status.md).
+9. **Window lengths:** silence and neglect are separate durations, read
+   from configuration. Defaults are 14 days and 30 days. The silence
+   window is shorter so an on-time repair is not labeled neglected while
+   it waits to go fixed.
+   See [ADR-0006](./adr/0006-silence-and-neglect-windows.md).
+10. **Connection check:** `GET /health` returns `200` and `{"status":"up"}`
+    when the process is serving HTTP. Unversioned, no body, does not check
+    the database. Any other response means the Client is not talking to the
+    Backend.
+    See [ADR-0007](./adr/0007-health-probe.md).
 
 ## Paused mid-question
 

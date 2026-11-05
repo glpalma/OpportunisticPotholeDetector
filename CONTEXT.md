@@ -71,18 +71,21 @@ The dashboard shows Potholes, not raw Sightings.
 `open`, `fixed`, or `resunk`. Stored on the Pothole. Judged from Sighting
 `capturedAt`, never from `receivedAt`.
 
-- **open** — the latest Sighting `capturedAt` is less than 30 days ago.
-- **fixed** — the latest Sighting `capturedAt` is 30 days ago or older.
-  A presumption, not proof of repair: a bus may simply have stopped
+- **open** — the latest Sighting `capturedAt` is inside the silence window.
+- **fixed** — the latest Sighting `capturedAt` is at or past the silence
+  window. A presumption, not proof of repair: a bus may simply have stopped
   driving that street.
 - **resunk** — the Pothole was fixed, and a later Sighting attached to it.
 
 **Neglected** is not a status. It describes an open Pothole whose first
-Sighting `capturedAt` is 30 days ago or older: still being seen, and has
-been for too long.
+Sighting `capturedAt` is at or past the neglect window: still being seen,
+and has been for too long.
 
-A Pothole is not deleted because it went quiet. See
-[ADR-0005](docs/adr/0005-pothole-status.md).
+The silence window and the neglect window are different durations. See
+[ADR-0005](docs/adr/0005-pothole-status.md) and
+[ADR-0006](docs/adr/0006-silence-and-neglect-windows.md).
+
+A Pothole is not deleted because it went quiet.
 
 ### Client
 A bus-mounted Raspberry Pi + camera running the on-device detector and
