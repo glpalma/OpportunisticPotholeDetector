@@ -222,3 +222,6 @@ __marimo__/
 # Java / Gradle
 backend/.gradle/
 backend/build/
+
+# JetBrains
+.idea
