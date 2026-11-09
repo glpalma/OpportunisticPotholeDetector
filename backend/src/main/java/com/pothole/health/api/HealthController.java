@@ -1,4 +1,4 @@
-package com.pothole.health;
+package com.pothole.health.api;
 
 import java.util.Map;
 
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HealthController {
 
-    @GetMapping("/v1/health")
+    @GetMapping("/health")
     Map<String, String> health() {
         return Map.of("status", "up");
     }

@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: pothole-api
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pothole
+    username: pothole
+    password: pothole
+
+server:
+  forward-headers-strategy: native
+  error:
+    include-message: never
+    include-stacktrace: never
+
+pothole:
+  api-key: ${POTHOLE_API_KEY:}
+  image-dir: ${POTHOLE_IMAGE_DIR:${java.io.tmpdir}/pothole-images}
+  image:
+    max-bytes: 3145728
+  rate-limit:
+    enabled: true
+    requests-per-second: 10
+    burst: 20
+    auth-failures-per-minute: 10
