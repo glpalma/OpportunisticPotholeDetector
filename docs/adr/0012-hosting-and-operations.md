@@ -41,9 +41,9 @@ small team.
 - A nightly off-site copy (database dump + images) is postponed.
 
 ### Disk
-- ADR-0002 estimates ~250 MB of images per bus per night; with 6-month
+- ADR-0002 estimates ~250 MB of images per bus per day; with 6-month
   retention (ADR-0011) that is ~45 GB, close to the droplet's disk.
-- Measure real nightly volume first. If needed, attach a DigitalOcean block
+- Measure real daily volume first. If needed, attach a DigitalOcean block
   storage volume for images or shorten retention.
 
 ### Stress test

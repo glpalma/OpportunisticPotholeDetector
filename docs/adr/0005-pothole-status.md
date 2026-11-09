@@ -1,7 +1,7 @@
 # ADR-0005: Pothole status is open, fixed, or resunk
 
 ## Status
-Accepted. The resunk rule is amended by [ADR-0009](./0009-pothole-clustering-position-locking-late-sightings.md) (late Sightings captured before the Pothole was presumed fixed reopen it instead of marking it resunk).
+Accepted. [ADR-0009](./0009-pothole-clustering-position-and-locking.md) records where a Pothole sits and how clustering is locked. It does not change the resunk rule below: any Sighting that attaches to a `fixed` Pothole marks it `resunk`.
 
 ## Context
 A Pothole that stops receiving Sightings might have been repaired, or the
@@ -17,8 +17,8 @@ express resunk, because that depends on remembering that the Pothole had
 already been fixed.
 
 `receivedAt` is the wrong clock. A Sighting captured in the afternoon can
-arrive at the depot that night. An upload clock would mark a hole fixed
-while a bus had already seen it.
+arrive the next time the Client connects. An upload clock would mark a hole
+fixed while a bus had already seen it.
 
 ## Decision
 Each Pothole has a stored status: `open`, `fixed`, or `resunk`.

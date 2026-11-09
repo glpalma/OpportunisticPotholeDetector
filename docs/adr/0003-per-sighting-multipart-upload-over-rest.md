@@ -5,7 +5,8 @@ Accepted. Amended by [ADR-0007](./0007-client-contract-auth-validation-health.md
 
 ## Context
 We have to pick the wire shape for Clients syncing Sightings to the Backend
-during the nightly depot window. Two decisions were tangled together:
+whenever they have a network ([ADR-0002](./0002-sync-on-connect-with-full-frames.md)).
+Two decisions were tangled together:
 
 1. **Transport**: REST/HTTP vs gRPC.
 2. **Granularity**: batched (N Sightings per request) vs per-Sighting.
@@ -14,18 +15,18 @@ during the nightly depot window. Two decisions were tangled together:
 
 gRPC's selling points — bidirectional streaming, strongly typed stubs,
 multiplexing — buy us little here. We are not doing a continuous feed; we
-are doing one burst per Client per night. The upload path is one-way
-Client → Backend. Any Pi has `curl` and HTTP client libraries out of the
-box; adding gRPC pulls in protoc, generated stubs, and HTTP/2 tuning for
-no concrete win. Firewall and depot-network stories are also simpler over
-plain HTTPS.
+are doing a burst of uploads each time a Client connects. The upload path
+is one-way Client → Backend. The rk322x runs Armbian and already has `curl`
+and HTTP client libraries; adding gRPC pulls in protoc, generated stubs,
+and HTTP/2 tuning for no concrete win. Firewall and depot-network stories
+are also simpler over plain HTTPS.
 
 ### Granularity
 
 An earlier design iteration assumed we'd batch "hundreds of Sightings per
 request" to amortize HTTP overhead. That assumption was imported from
 "spotty mobile" thinking and does not survive the setting established by
-[ADR-0002](./0002-nightly-depot-sync-with-full-frames.md):
+[ADR-0002](./0002-sync-on-connect-with-full-frames.md):
 
 - Images are 200–500 KB each. A batch of 500 Sightings is 100–250 MB per
   request — above default server body-size caps, hostile to resumability,
@@ -40,8 +41,10 @@ PUT) — avoids the body-size and resumability issues, but introduces an
 image never arrived because the Client died between the two calls.
 
 Per-Sighting upload sidesteps both. The only cost is HTTP overhead per
-request: ~1 KB of headers × ~500 Sightings/day ≈ 500 KB of waste over a
-link where we have hours. Immaterial.
+request: ~1 KB of headers × ~500 Sightings/day ≈ 500 KB of waste. Immaterial,
+and it is what lets a short connection finish whole Sightings instead of
+failing a batch. The Backend accepts one Sighting per request. It does not
+accept a batch.
 
 The Client has limited memory and will delete each Sighting after upload.
 Idempotency therefore matters — if the Backend saves a Sighting but the
@@ -63,7 +66,8 @@ posting to `/v1/sightings`. Dashboard reads are not part of this contract.
 
 - The multipart body contains two parts:
   - `metadata` — JSON with `sighting_id`, `client_id`, GPS fields, `confidence`, `bbox`.
-  - `image` — the full-resolution representative JPEG.
+  - `image` — required. The full-resolution representative JPEG. Missing
+    or non-JPEG bytes are not a Sighting.
 - The Backend treats `sighting_id` as a natural key. Re-POSTing the same
   `sighting_id` changes nothing.
 - The Client deletes its local copy of a Sighting **only** after `200` or
@@ -78,9 +82,9 @@ posting to `/v1/sightings`. Dashboard reads are not part of this contract.
 | `400` | Metadata does not match the contract (missing field, bad JSON, bad `bbox`, value out of range, `sighting_id` not a UUID) | Keep the local copy and do not retry that payload |
 | `415` | `image` is missing or its bytes are not a JPEG | Keep the local copy and do not retry that payload |
 | `5xx` | The row or the image could not be stored | Keep the local copy and retry later |
-- There is no batching layer. The Client sends Sightings one at a time
-  during the sync window, in whatever order it likes, with whatever
-  concurrency the depot link tolerates.
+- There is no batching layer. Whenever the Client has a network, it sends
+  Sightings one at a time, in whatever order it likes, with whatever
+  concurrency the link tolerates.
 
 ## Consequences
 
@@ -94,10 +98,10 @@ posting to `/v1/sightings`. Dashboard reads are not part of this contract.
 - Any HTTP stack on either side works. No special infra.
 
 ### Negative
-- ~500 HTTP requests per Client per night. Over depot Wi-Fi with a
-  multi-hour window, this is minutes of sync, not hours — but it does
-  mean the Backend has to handle burst concurrency when many buses hit
-  the depot simultaneously.
+- ~500 HTTP requests per Client per day of detections. Over depot Wi-Fi
+  that is minutes, not hours — but a shorter connection uploads only what
+  fits, and the Backend has to handle burst concurrency when many buses
+  connect at once.
 - No single "I'm done syncing" transaction. The Backend infers sync
   completion from "Client stopped POSTing," which is fine for Pothole
   derivation (clustering tolerates late arrivals) but means there is no

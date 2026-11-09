@@ -17,8 +17,9 @@ The Backend is a Spring Boot application. It serves the Client contract
 
 The dashboard is an Angular application.
 
-The on-device Client is neither. It stays a separate program on the Pi
-that POSTs Sightings to the Backend.
+The on-device Client is neither. It stays a separate program on the rk322x
+([ADR-0006](./0006-client-hardware-rk322x-tv-box.md)) that POSTs one Sighting
+per request to the Backend.
 
 This repo houses all three. Each lives in a folder named after itself:
 `backend/`, `frontend/`, and `client/`.
@@ -29,10 +30,10 @@ The database and the map library are not chosen here.
 
 ### Positive
 - The team implements the API and the dashboard in stacks they already know.
-- The Client contract stays plain HTTP, so the Pi does not need a Spring
+- The Client contract stays plain HTTP, so the rk322x does not need a Spring
   client.
 
 ### Negative
 - More process and build machinery than a one-file POC backend.
-- Two front-of-house codebases (Pi client and Angular dashboard) plus the
+- Two front-of-house codebases (rk322x client and Angular dashboard) plus the
   Spring Boot service.

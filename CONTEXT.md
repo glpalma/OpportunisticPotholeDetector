@@ -6,14 +6,15 @@ Terms are the vocabulary the whole system must agree on.
 ## Deployment framing
 
 Fleet-mounted client devices (rk322x TV box + camera, see ADR-0006) installed
-on buses that opportunistically detect potholes as they run their routes. Buses
-have no internet connectivity while in service. They sync to a central backend
-overnight at the depot over Wi-Fi (see ADR-0002). The proof of concept starts
-with one bus.
+on buses that opportunistically detect potholes as they run their routes. A
+Client is not assumed to have a network while in service. Whenever it connects
+to a network, it syncs immediately. It does not wait for night, and the depot
+is the expected network rather than a nightly protocol (see ADR-0002). The
+proof of concept starts with one bus.
 
 The system is "opportunistic" in two senses: (1) detection piggybacks on the
 bus's existing route — we don't drive to find potholes, they drive past us;
-(2) upload piggybacks on the bus returning to the depot.
+(2) upload piggybacks on whatever network the Client connects to.
 
 ## Core terms
 
@@ -46,15 +47,16 @@ to do anything useful later:
 - `confidence` — model's confidence in `[0, 1]`.
 - `bbox` — `[x, y, width, height]` in pixels of the representative frame,
   origin at the top-left. The box of the detection chosen for this Sighting.
-- `image` — the full-resolution representative frame (highest-confidence
-  frame of the collapsed burst). See ADR-0002.
+- `image` — required. The full-resolution representative frame
+  (highest-confidence frame of the collapsed burst). A Sighting without
+  this frame is rejected. See ADR-0002.
 
 The Backend persists everything in the payload plus one Backend-side field:
 
 - `receivedAt` — when the Backend accepted the upload. Distinct from
-  `capturedAt`: a Sighting captured at 14:00 may not be received until
-  23:30 that night at depot sync. Clustering, aging, and sync-lag
-  observability must be explicit about which time they mean.
+  `capturedAt`: a Sighting captured at 14:00 may not be received until the
+  Client next connects. Clustering, aging, and sync-lag observability must
+  be explicit about which time they mean.
 
 No class or severity is emitted by the Client. The frame preserves all
 information needed to derive those server-side with better/newer models
@@ -69,9 +71,8 @@ over what time window.
 A Pothole's position is the position of its first Sighting and does not
 move as more Sightings attach (see ADR-0009).
 
-The dashboard is organized around Potholes. Each Pothole's Sightings are
-visible in its detail view, because verification and review happen per
-Sighting (see ADR-0014).
+The dashboard shows Potholes, not raw Sightings. A Sighting is shown so a
+reviewer can confirm it or mark it a false positive (see ADR-0014).
 
 ### Pothole status
 `open`, `fixed`, or `resunk`. Stored on the Pothole. Judged from Sighting
@@ -81,9 +82,8 @@ Sighting (see ADR-0014).
 - **fixed** — the latest Sighting `capturedAt` is 30 days ago or older.
   A presumption, not proof of repair: a bus may simply have stopped
   driving that street.
-- **resunk** — the Pothole was fixed, and a Sighting captured after it was
-  presumed fixed attached to it. A Sighting captured earlier but uploaded
-  late is not a comeback (see ADR-0009).
+- **resunk** — the Pothole was fixed, and a later Sighting attached to it.
+  A late upload is still a comeback (see ADR-0005).
 
 **Neglected** is not a status. It describes an open Pothole whose first
 Sighting `capturedAt` is 30 days ago or older: still being seen, and has
@@ -107,22 +107,24 @@ detector and local buffer. Produces Sightings. Owns the dedup of contiguous
 frames. Identified by `client_id`.
 
 ### Depot
-The physical location where buses return at end-of-service. The only place
-where Clients have network connectivity. A sync window is the span of time
-a given Client is parked at the Depot with power and Wi-Fi available.
+The physical location where buses return at end-of-service, and the usual
+place a Client gets a network (the Depot's Wi-Fi). It is not a nightly
+sync window. Any network connection starts a sync (see ADR-0002).
 
-Depot power and Wi-Fi during the overnight window are a given (stipulated
-by the fleet operator). The sync window is assumed to be hours, not
-minutes. The sync protocol does not need to optimize for an ignition-cut
-shutdown race.
+Depot power and Wi-Fi are a given (stipulated by the fleet operator). A
+stay there may last hours. The sync protocol still has to make progress
+on a shorter connection, because the Client syncs whenever a network
+appears.
 
 ### Backend
-Receives Sightings from Clients, one per request (ADR-0003), persists them,
-and derives Potholes from them. Also serves the dashboard.
+Receives one Sighting per request (ADR-0003). A request never carries a
+batch. Persists each Sighting and derives Potholes from them. Also serves
+the dashboard.
 
 ### Dashboard user
-A member of the project team with an account on the dashboard. Views Potholes
-and Sightings and records Reviews. There is no public access (ADR-0011).
+A member of the project team with an account on the dashboard. Views
+Potholes and records Reviews on Sightings, including false positives.
+There is no public access (ADR-0011).
 
 ## Retired terms
 

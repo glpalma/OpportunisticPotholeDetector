@@ -1,7 +1,7 @@
 # ADR-0011: Privacy (LGPD) and photo retention
 
 ## Status
-Accepted. Complements [ADR-0002](./0002-nightly-depot-sync-with-full-frames.md)
+Accepted. Complements [ADR-0002](./0002-sync-on-connect-with-full-frames.md)
 and [ADR-0005](./0005-pothole-status.md).
 
 ## Context

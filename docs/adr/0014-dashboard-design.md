@@ -6,14 +6,15 @@ Accepted. Closes the "map library still open" point of
 branch in `grill-progress.md`.
 
 ## Context
-CONTEXT.md said "the dashboard shows Potholes, not raw Sightings". But
-ADR-0002 keeps full frames for human verification and false-positive
-auditing, and both happen per Sighting: which frame, which bbox, which bus,
-when. With a minimum support of one Sighting per Pothole, every detector
-false positive is also a Pothole on the map.
+The dashboard shows Potholes, not a feed of raw Sightings (CONTEXT.md).
+Sightings are opened where a person has to judge one frame: on the Pothole,
+and in the review queue. A review marks that Sighting as a pothole or a
+false positive. With a minimum support of one Sighting, a detector false
+positive is also a Pothole; hiding Potholes whose Sightings are all false
+positives keeps those off the map by default.
 
-Data arrives once a night (ADR-0002), so the dashboard does not need to be
-live.
+Data arrives when a Client connects (ADR-0002), so the dashboard does not
+need to be live.
 
 ## Decision
 
@@ -27,9 +28,11 @@ live.
 - Desktop first. Map and detail pages are usable on a phone; the review
   queue is meant for a keyboard.
 
-### Pothole-centric, with Sighting drill-down
-Map and table show **Potholes**. The Pothole detail page lists its
-**Sightings**. Review happens on Sightings.
+### Potholes on the map, Sightings only for review
+Map and table show **Potholes**. They do not list raw Sightings. The
+Pothole detail page lists that Pothole's Sightings so a reviewer can
+confirm one or mark it a false positive. The review queue is the same
+job, one unreviewed Sighting at a time.
 
 ### Status labels
 Stored status (ADR-0005) and derived neglect are shown as:

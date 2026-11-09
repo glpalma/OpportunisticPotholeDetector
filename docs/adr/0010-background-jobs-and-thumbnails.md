@@ -1,7 +1,7 @@
 # ADR-0010: Background jobs in Postgres, server-side thumbnails
 
 ## Status
-Accepted. Amends [ADR-0002](./0002-nightly-depot-sync-with-full-frames.md)
+Accepted. Amends [ADR-0002](./0002-sync-on-connect-with-full-frames.md)
 (the "no thumbnails" point).
 
 ## Context
@@ -16,7 +16,7 @@ problem: a table of 50 Potholes or a timeline of Sightings rendered from
 Backend fix that without changing the Client contract.
 
 A message broker (RabbitMQ, Redis) would be one more service to run on a
-small VPS for a handful of jobs per night.
+small VPS for a handful of jobs a day.
 
 ## Decision
 
@@ -40,7 +40,8 @@ A `jobs` table in Postgres: `id`, `type`, `sighting_id`, `status`
   older than ~1 h (orphans from crashes, see ADR-0008).
 - **Status sweep** (`@Scheduled`, daily): applies ADR-0005's silence rule,
   moving `open` Potholes whose `last_seen_at` is 30 days old or older to
-  `fixed`, and setting `fixed_at` as defined in ADR-0009.
+  `fixed`. It does not move `resunk` Potholes. A Sighting that later
+  attaches to a `fixed` Pothole marks it `resunk` in that upload request.
 - **Retention purge** (`@Scheduled`, daily): see ADR-0011.
 
 ### Postponed

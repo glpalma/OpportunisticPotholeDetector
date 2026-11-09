@@ -9,7 +9,7 @@ ADR-0004 left the database open. The Backend has to store Sightings,
 cluster them into Potholes within ~10 m, keep background jobs, dashboard
 users and review marks, and hold one full-frame JPEG per Sighting.
 
-At POC volume (one bus, a few hundred Sightings per night) none of this
+At POC volume (one bus, a few hundred Sightings per day) none of this
 needs specialized storage. The question is how little we can get away with.
 
 ## Decision
@@ -47,7 +47,7 @@ Indexes: `captured_at`, `(lat, lon)`, `pothole_id`, and a partial index on
 **`potholes`** — one row per derived Pothole.
 `id` (UUID, PK), `lat`, `lon` (fixed at the first Sighting, see ADR-0009),
 `status` (`open` | `fixed` | `resunk`), `first_seen_at`, `last_seen_at`,
-`fixed_at`, `sighting_count`, `max_confidence`, `created_at`.
+`sighting_count`, `max_confidence`, `created_at`.
 Indexes: `(lat, lon)`, `status`, `last_seen_at`.
 The counts and dates are maintained at ingest so the dashboard never
 aggregates Sightings on the fly.
@@ -76,7 +76,7 @@ map to `captured_at`/`received_at`.
 - Images on a local volume tie the Backend to one machine, and they have to
   be backed up separately from the database.
 - Disk usage grows with full frames (ADR-0002 estimates ~250 MB per bus
-  per night).
+  per day).
 
 ### Mitigations
 - PostGIS (or object storage for images) is a migration, not a rewrite:
