@@ -1,4 +1,4 @@
-# ADR-0014: Dashboard design
+# ADR-0016: Dashboard design
 
 ## Status
 Accepted. Closes the "map library still open" point of
@@ -41,19 +41,20 @@ Stored status (ADR-0005) and derived neglect are shown as:
 | --- | --- |
 | `open`, not neglected | Aberto |
 | `open`, neglected | Negligenciado |
-| `fixed` | Sem registro há 30+ dias |
+| `fixed` | Sem registro recente |
 | `resunk` | Reaberto |
 
 `fixed` is deliberately not labelled "Consertado": it is a presumption
 (ADR-0005). **Neglected is computed by the Backend** and returned as a
-flag, so the 30-day windows live in one place.
+flag, so the configured silence and neglect windows live in one place
+(ADR-0006).
 
 ### Review
 - A Sighting can be marked **"É buraco"** (`pothole`) or **"Falso
   positivo"** (`false_positive`), or the mark can be cleared. Author and
-  time are stored (ADR-0008).
+  time are stored (ADR-0010).
 - Concurrent marks: last write wins.
-- Marks do not change clustering or status (ADR-0009). A Pothole whose
+- Marks do not change clustering or status (ADR-0011). A Pothole whose
   Sightings are all `false_positive` is hidden by default.
 - **Detector precision** = Sightings marked `pothole` ÷ all reviewed
   Sightings.
@@ -78,10 +79,10 @@ flag, so the 30-day windows live in one place.
    number of other Sightings). Shortcuts: **B** = É buraco, **F** = Falso
    positivo, **P** = Pular, **Z** = Desfazer. The next image is preloaded.
 6. **Bus status card** in the header — last sync (latest `receivedAt`),
-   queue size from the last health check (ADR-0007), number of Sightings
+   queue size from the last health check (ADR-0009), number of Sightings
    in the last sync.
 
-Purged images (ADR-0011) show a placeholder.
+Purged images (ADR-0013) show a placeholder.
 
 ### Refresh and time
 - Data loads on navigation, plus a refresh button. No polling, no
@@ -89,13 +90,13 @@ Purged images (ADR-0011) show a placeholder.
 - Dates are shown as `dd/MM/yyyy HH:mm` in `America/Sao_Paulo`.
   The API always uses ISO 8601 UTC.
 
-### Read API (`/app/api`, session-authenticated, ADR-0013)
+### Read API (`/app/api`, session-authenticated, ADR-0015)
 Dashboard reads are not part of the versioned Client contract (ADR-0003)
 and can change with the dashboard.
 
 | Endpoint | Purpose |
 | --- | --- |
-| `POST /login`, `POST /logout`, `GET /me` | Session (ADR-0013) |
+| `POST /login`, `POST /logout`, `GET /me` | Session (ADR-0015) |
 | `GET /potholes/map` | Compact points (`id`, `lat`, `lon`, `status`, `neglected`) for the visible map area (`bounds=minLon,minLat,maxLon,maxLat`) and filters; capped at a few thousand |
 | `GET /potholes` | Paginated, sortable table with the same filters |
 | `GET /potholes/{id}` | Pothole detail with its Sightings |
@@ -104,7 +105,7 @@ and can change with the dashboard.
 | `GET /review-queue/next` | Next unreviewed Sighting(s) for the queue |
 | `PUT /sightings/{id}/review` | `{"verdict": "pothole" \| "false_positive" \| null}` |
 | `GET /stats` | Numbers for the stats card |
-| `GET /clients` | Bus sync status (ADR-0007) |
+| `GET /clients` | Bus sync status (ADR-0009) |
 | `GET /export/sightings.csv` | CSV export (below) |
 
 Filters shared by the map, table and export: `status`, `neglected`,

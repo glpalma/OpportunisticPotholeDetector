@@ -1,4 +1,4 @@
-# ADR-0007: Client contract — API key, validation, status codes, health check
+# ADR-0009: Client contract — API key, validation, status codes, health check
 
 ## Status
 Accepted. Amends [ADR-0003](./0003-per-sighting-multipart-upload-over-rest.md).
@@ -10,7 +10,7 @@ Client contract with no authentication and no TLS requirement, on the
 grounds that Clients sit on a trusted depot network.
 
 That reasoning does not hold for the Backend: it runs on a public VPS
-(see ADR-0012), so it is reachable from the whole internet no matter where
+(see ADR-0014), so it is reachable from the whole internet no matter where
 the bus connects from. "Anyone who can reach the Backend can write
 Sightings" means anyone on the internet. HTTPS also costs nothing with the
 reverse proxy we use, and the dashboard login requires it anyway.

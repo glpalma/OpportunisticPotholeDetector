@@ -1,4 +1,4 @@
-# ADR-0011: Privacy (LGPD) and photo retention
+# ADR-0013: Privacy (LGPD) and photo retention
 
 ## Status
 Accepted. Complements [ADR-0002](./0002-sync-on-connect-with-full-frames.md)
@@ -29,14 +29,14 @@ disk.
 
 ### Access
 - Images and thumbnails are served only through authenticated Backend
-  endpoints (ADR-0013). The reverse proxy never serves the image folder
+  endpoints (ADR-0015). The reverse proxy never serves the image folder
   directly.
 - Nothing is public. Any future public view must use blurred images.
 
 ### Blurring
 - No automatic blurring for the POC.
 - When needed, it becomes a `blur` job that runs before the thumbnail job
-  (ADR-0010).
+  (ADR-0012).
 
 ### Retention
 - Images are kept for a fixed period: **default 6 months, configurable**.

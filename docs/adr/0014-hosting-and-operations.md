@@ -1,4 +1,4 @@
-# ADR-0012: Hosting, rate limiting, backups and stress test
+# ADR-0014: Hosting, rate limiting, backups and stress test
 
 ## Status
 Accepted.
@@ -30,7 +30,7 @@ small team.
 - Per client IP: all `/v1/` requests 10/s with a burst of 20; failed
   authentication (`401` on `/v1/`, and failed dashboard logins) 10 per minute.
 - Exceeding a limit returns `429` with `Retry-After`. The Client waits at
-  least that long (ADR-0007).
+  least that long (ADR-0009).
 - Spring reads the real client IP from Caddy's forwarded headers
   (`server.forward-headers-strategy=native`).
 - Limits and an on/off switch are environment variables, so they can be
@@ -42,7 +42,7 @@ small team.
 
 ### Disk
 - ADR-0002 estimates ~250 MB of images per bus per day; with 6-month
-  retention (ADR-0011) that is ~45 GB, close to the droplet's disk.
+  retention (ADR-0013) that is ~45 GB, close to the droplet's disk.
 - Measure real daily volume first. If needed, attach a DigitalOcean block
   storage volume for images or shorten retention.
 
@@ -54,7 +54,7 @@ small team.
 
 ### Positive
 - One machine, one Compose file, HTTPS without manual certificates.
-- Same-origin dashboard and API: no CORS, simple cookies (ADR-0013).
+- Same-origin dashboard and API: no CORS, simple cookies (ADR-0015).
 - Cost is covered by credits for the POC year.
 
 ### Negative

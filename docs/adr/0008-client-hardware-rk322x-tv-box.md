@@ -1,4 +1,4 @@
-# ADR-0006: The Client runs on an rk322x TV box
+# ADR-0008: The Client runs on an rk322x TV box
 
 ## Status
 Accepted

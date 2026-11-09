@@ -1,7 +1,7 @@
 # ADR-0003: Per-Sighting multipart upload over REST
 
 ## Status
-Accepted. Amended by [ADR-0007](./0007-client-contract-auth-validation-health.md) (API key over HTTPS, validation rules, status codes, health check). The status-code table below is replaced by ADR-0007's.
+Accepted. Amended by [ADR-0009](./0009-client-contract-auth-validation-health.md) (API key over HTTPS, validation rules, status codes, health check). The status-code table below is replaced by ADR-0009's.
 
 ## Context
 We have to pick the wire shape for Clients syncing Sightings to the Backend

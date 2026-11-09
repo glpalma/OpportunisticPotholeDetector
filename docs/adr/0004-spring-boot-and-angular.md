@@ -1,7 +1,7 @@
 # ADR-0004: Spring Boot backend, Angular dashboard
 
 ## Status
-Accepted. The Client runs on an rk322x TV box, not a Pi ([ADR-0006](./0006-client-hardware-rk322x-tv-box.md)). Database chosen in [ADR-0008](./0008-postgres-schema-and-image-storage.md); map library chosen in [ADR-0014](./0014-dashboard-design.md).
+Accepted. The Client runs on an rk322x TV box, not a Pi ([ADR-0008](./0008-client-hardware-rk322x-tv-box.md)). Database chosen in [ADR-0010](./0010-postgres-schema-and-image-storage.md); map library chosen in [ADR-0016](./0016-dashboard-design.md).
 
 ## Context
 The backend and dashboard stacks were unset. For a POC whose HTTP surface
@@ -18,7 +18,7 @@ The Backend is a Spring Boot application. It serves the Client contract
 The dashboard is an Angular application.
 
 The on-device Client is neither. It stays a separate program on the rk322x
-([ADR-0006](./0006-client-hardware-rk322x-tv-box.md)) that POSTs one Sighting
+([ADR-0008](./0008-client-hardware-rk322x-tv-box.md)) that POSTs one Sighting
 per request to the Backend.
 
 This repo houses all three. Each lives in a folder named after itself:

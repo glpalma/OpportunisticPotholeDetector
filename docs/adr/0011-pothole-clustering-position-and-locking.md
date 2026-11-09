@@ -1,4 +1,4 @@
-# ADR-0009: Pothole clustering — position and locking
+# ADR-0011: Pothole clustering — position and locking
 
 ## Status
 Accepted. Records the clustering rules from `grill-progress.md` ("POC framing"). Does not change the resunk rule in [ADR-0005](./0005-pothole-status.md): any Sighting that attaches to a `fixed` Pothole marks it `resunk`, including a Sighting that was captured earlier and uploaded late.
@@ -26,7 +26,7 @@ When a Sighting attaches, the Pothole's `sighting_count`, `max_confidence`, `fir
 Follow [ADR-0005](./0005-pothole-status.md). A Sighting that attaches to a `fixed` Pothole sets the status to `resunk` in that same request. A Sighting that attaches to a `resunk` Pothole leaves the status `resunk`. There is no reopen path for a late upload.
 
 ### Review marks do not affect clustering or status
-Marking a Sighting as a false positive ([ADR-0014](./0014-dashboard-design.md)) does not detach it, does not change the Pothole's position, counts or dates, and does not change its status. A Pothole whose Sightings are **all** marked `false_positive` is a false-positive Pothole; the dashboard hides those by default.
+Marking a Sighting as a false positive ([ADR-0016](./0016-dashboard-design.md)) does not detach it, does not change the Pothole's position, counts or dates, and does not change its status. A Pothole whose Sightings are **all** marked `false_positive` is a false-positive Pothole; the dashboard hides those by default.
 
 ## Consequences
 

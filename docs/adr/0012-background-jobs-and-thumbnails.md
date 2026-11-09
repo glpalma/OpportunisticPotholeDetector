@@ -1,4 +1,4 @@
-# ADR-0010: Background jobs in Postgres, server-side thumbnails
+# ADR-0012: Background jobs in Postgres, server-side thumbnails
 
 ## Status
 Accepted. Amends [ADR-0002](./0002-sync-on-connect-with-full-frames.md)
@@ -7,7 +7,7 @@ Accepted. Amends [ADR-0002](./0002-sync-on-connect-with-full-frames.md)
 ## Context
 Some work should not run inside the upload request: generating a display
 thumbnail, cleaning up temp files, the daily open → fixed sweep from
-ADR-0005, and the photo retention purge from ADR-0011.
+ADR-0005, and the photo retention purge from ADR-0013.
 
 ADR-0002 rejected thumbnails, but its argument is about **upload**
 bandwidth from the Client, and it holds. The dashboard has the opposite
@@ -37,15 +37,16 @@ A `jobs` table in Postgres: `id`, `type`, `sighting_id`, `status`
   path stored in `sightings.thumbnail_path`. The dashboard falls back to
   the full image while `thumbnail_path` is empty.
 - **Temp-file sweep** (`@Scheduled`, hourly): deletes upload temp files
-  older than ~1 h (orphans from crashes, see ADR-0008).
+  older than ~1 h (orphans from crashes, see ADR-0010).
 - **Status sweep** (`@Scheduled`, daily): applies ADR-0005's silence rule,
-  moving `open` Potholes whose `last_seen_at` is 30 days old or older to
-  `fixed`. It does not move `resunk` Potholes. A Sighting that later
-  attaches to a `fixed` Pothole marks it `resunk` in that upload request.
-- **Retention purge** (`@Scheduled`, daily): see ADR-0011.
+  moving `open` Potholes whose `last_seen_at` is at or past the silence
+  window (ADR-0006) to `fixed`. It does not move `resunk` Potholes. A
+  Sighting that later attaches to a `fixed` Pothole marks it `resunk` in
+  that upload request.
+- **Retention purge** (`@Scheduled`, daily): see ADR-0013.
 
 ### Postponed
-Reverse geocoding (street names), image blurring (ADR-0011) and a
+Reverse geocoding (street names), image blurring (ADR-0013) and a
 server-side detector re-check. Each would be a new job type, not a new
 mechanism.
 
