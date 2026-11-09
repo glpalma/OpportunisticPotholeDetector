@@ -4,7 +4,7 @@
 Accepted
 
 ## Context
-[ADR-0005](0005-pothole-status.md) uses two durations. The silence window
+[ADR-0005](./0005-pothole-status.md) uses two durations. The silence window
 decides when an open Pothole becomes fixed. The neglect window decides
 when an open Pothole has been seen for too long. They were both written
 as 30 days.

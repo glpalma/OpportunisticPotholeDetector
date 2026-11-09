@@ -1,13 +1,12 @@
 # OpportunisticPotholeDetector
 
-Bus-mounted Clients detect potholes and upload Sightings to a Spring Boot
-backend. The dashboard is Angular. The on-device Client is a separate
-program on the Pi. The three live in `backend/`, `frontend/`, and `client/`.
-
-`GET /health` returns `200` and `{"status":"up"}` when the backend process
-is serving HTTP. Clients use it to tell a dead depot link from a backend
-that will accept Sightings
-([ADR-0007](docs/adr/0007-health-probe.md)).
+Bus-mounted Clients (rk322x TV box + camera) detect potholes and upload
+Sightings to a Spring Boot backend. Each request is one Sighting, and each
+Sighting includes a required full frame. A Client syncs whenever it
+connects to a network, not only overnight at the depot. The dashboard is
+Angular and shows Potholes; Sightings are opened to confirm a detection or
+mark a false positive. The three programs live in `backend/`, `frontend/`,
+and `client/`.
 
 Glossary: [CONTEXT.md](CONTEXT.md). Decisions: [docs/adr/](docs/adr/).
 

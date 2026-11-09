@@ -1,7 +1,7 @@
 # ADR-0005: Pothole status is open, fixed, or resunk
 
 ## Status
-Accepted
+Accepted. Window lengths are configuration in [ADR-0006](./0006-silence-and-neglect-windows.md). [ADR-0011](./0011-pothole-clustering-position-and-locking.md) records where a Pothole sits and how clustering is locked. It does not change the resunk rule below: any Sighting that attaches to a `fixed` Pothole marks it `resunk`.
 
 ## Context
 A Pothole that stops receiving Sightings might have been repaired, or the
@@ -17,8 +17,8 @@ express resunk, because that depends on remembering that the Pothole had
 already been fixed.
 
 `receivedAt` is the wrong clock. A Sighting captured in the afternoon can
-arrive at the depot that night. An upload clock would mark a hole fixed
-while a bus had already seen it.
+arrive the next time the Client connects. An upload clock would mark a hole
+fixed while a bus had already seen it.
 
 ## Decision
 Each Pothole has a stored status: `open`, `fixed`, or `resunk`.
@@ -38,7 +38,7 @@ The silence window and the neglect window are durations, not columns.
 They answer different questions: silence asks when the Pothole was last
 seen, neglect asks when it was first seen while it is still `open`.
 They are not the same length, and neither length is a literal in code.
-See [ADR-0006](0006-silence-and-neglect-windows.md).
+See [ADR-0006](./0006-silence-and-neglect-windows.md).
 
 Silence means "we have not seen it," not "a bus passed and the detector
 did not fire." The system has no record of passes without a detection.
