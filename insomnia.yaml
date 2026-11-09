@@ -1,0 +1,125 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: insomnia
+meta:
+  id: wrk_039303a907ba4b58ba3483849627c625
+  created: 1794247767795
+  modified: 1794247767795
+  description: ""
+collection:
+  - url: http://localhost:8080/health
+    name: Health
+    meta:
+      id: req_1323dcc59550424fa1c567406caa6924
+      created: 1794247771676
+      modified: 1794248632853
+      isPrivate: false
+      description: ""
+      sortKey: -1794247771676
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/v1/sightings
+    name: Get sightings
+    meta:
+      id: req_04eba32366544c7da695dfc1a900edd0
+      created: 1794248460283
+      modified: 1794251603352
+      isPrivate: false
+      description: ""
+      sortKey: -1794248460283
+    method: GET
+    parameters:
+      - name: page
+        value: "1"
+        description: ""
+        disabled: true
+      - name: pageSize
+        value: "1"
+        description: ""
+        disabled: true
+    headers:
+      - name: X-API-Key
+        value: mo963
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/v1/sightings
+    name: Post sighting
+    meta:
+      id: req_c0aa5109c5a4431d90ea1ccec5c6e08d
+      created: 1794248659477
+      modified: 1794250327365
+      isPrivate: false
+      description: ""
+      sortKey: -1794248659477
+    method: POST
+    body:
+      mimeType: multipart/form-data
+      params:
+        - name: metadata
+          value: |-
+            {
+              "sighting_id": "3f1c2c2e-0b1a-4d5e-9f70-1a2b3c4d5e6f",
+              "client_id": "bus-1",
+              "lat": -23.5505,
+              "lon": -46.6333,
+              "capturedAt": "2026-11-09T18:20:00Z",
+              "heading": 90,
+              "speed": 8.5,
+              "horizontal_accuracy_m": 4.2,
+              "confidence": 0.91,
+              "bbox": [10, 20, 30, 40]
+            }
+          multiline: true
+          fileName: /Users/glpalma/Downloads/metadata.json
+          type: file
+        - name: image
+          value: ""
+          description: ""
+          disabled: false
+          fileName: /Users/glpalma/Downloads/pothole.JPG
+          type: file
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+    authentication:
+      type: apikey
+      key: X-API-Key
+      value: mo963
+      disabled: false
+      addTo: header
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_3d47a2f3d515869db50e5d987fb4addb7f027bab
+    created: 1794247767797
+    modified: 1794247767797
+environments:
+  name: Base Environment
+  meta:
+    id: env_3d47a2f3d515869db50e5d987fb4addb7f027bab
+    created: 1794247767797
+    modified: 1794247767797
+    isPrivate: false
