@@ -1,3 +1,6 @@
+# Backend and Postgres only. The full stack (Caddy + dashboard + API) is the
+# compose.yaml at the repository root: docker compose up --build
+
 services:
   postgres:
     image: postgres:16

@@ -14,21 +14,79 @@ A Pothole is presumed fixed after the silence window and neglected after
 the neglect window. The two durations are configuration, not code
 ([ADR-0006](docs/adr/0006-silence-and-neglect-windows.md)).
 
-## Backend
+## Run the stack
 
-The Backend is a Spring Boot app in `backend/`. Each feature
-(`client`, `health`, `sighting`) is split into `domain`, `data`, and
-`api`. Shared security and rate limiting stay in `config`. Compose runs
-the app with Postgres and a volume for Sighting images. The API key is
-`POTHOLE_API_KEY` in [backend/.env](backend/.env). Compose reads that file.
-The checked-in value is `local-dev-key`. Plain HTTP is only for this local
-stack; the deployed Backend is HTTPS.
-
-From `backend/`:
+From the repository root, Compose starts Postgres, the Spring Boot app, and
+Caddy. Caddy serves the Angular dashboard and proxies `/v1` and `/app/api`
+to the app. It does not serve the image volume.
 
 ```powershell
 docker compose up --build
 ```
+
+Open the dashboard at [http://localhost/](http://localhost/). The map opens
+on Campinas. If that view has no Potholes and some exist elsewhere, it
+moves to them. The Client API stays on [http://localhost:8080](http://localhost:8080/)
+as well as through Caddy. The API key defaults to `local-dev-key`. Set
+`POTHOLE_API_KEY` to override it. Plain HTTP is only for this local stack.
+
+`backend/compose.yaml` still starts only the API and Postgres, without the
+dashboard.
+
+## Dashboard
+
+The dashboard is an Angular app in `frontend/`. UI copy is Portuguese
+(pt-BR). It shows Potholes on a map and in a table, a Pothole detail page,
+and a review queue. There is no login in this POC: `/app/api` is open on
+the local stack. Reviews store the verdict and time and leave
+`reviewed_by` empty.
+
+Dates are shown as `dd/MM/yyyy HH:mm` in `America/Sao_Paulo`. The API uses
+ISO 8601 UTC.
+
+For UI work without rebuilding the image, run the API (root Compose, or
+`backend/compose.yaml`) and from `frontend/`:
+
+```powershell
+npm install
+npm start
+```
+
+`ng serve` proxies `/app/api` to `http://localhost:8080`.
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/app/api/potholes/map?bounds=minLon,minLat,maxLon,maxLat` | Points for the visible map |
+| `GET` | `/app/api/potholes` | Paginated table |
+| `GET` | `/app/api/potholes/{id}` | Detail and its Sightings |
+| `GET` | `/app/api/sightings/{id}/image` | Full frame |
+| `GET` | `/app/api/sightings/{id}/thumbnail` | Thumbnail, or the full frame if none exists |
+| `GET` | `/app/api/review-queue/next` | Oldest unreviewed Sightings |
+| `PUT` | `/app/api/sightings/{id}/review` | `{"verdict":"pothole"\|"false_positive"\|null}` |
+| `GET` | `/app/api/stats` | Counts and detector precision |
+| `GET` | `/app/api/clients` | Bus sync status |
+| `GET` | `/app/api/export/sightings.csv` | Filtered Sighting CSV |
+
+Shared filters: `status`, `neglected`, `from`, `to`, `minConfidence`,
+`unreviewed`, `includeFalsePositives`. False-positive Potholes are hidden
+unless `includeFalsePositives=true`. The review queue accepts an optional
+cursor, `afterCapturedAt` and `afterId`, so Pular can move past a Sighting
+without marking it.
+
+Silence and neglect windows default to 14 and 30 days
+(`POTHOLE_SILENCE_WINDOW_DAYS`, `POTHOLE_NEGLECT_WINDOW_DAYS`). The app
+refuses to start if silence is not shorter than neglect. A daily job marks
+quiet open Potholes `fixed`.
+
+## Backend
+
+The Backend is a Spring Boot app in `backend/`. Each feature
+(`client`, `health`, `sighting`, `dashboard`) is split into `domain`,
+`data`, and `api`. Shared security and rate limiting stay in `config`.
+The API key is `POTHOLE_API_KEY`. When the app runs from `backend/` with
+`docker compose`, Compose reads [backend/.env](backend/.env). The local
+default is `local-dev-key`. Plain HTTP is only for this local stack; the
+deployed Backend is HTTPS.
 
 `GET /health` is an unauthenticated liveness check:
 

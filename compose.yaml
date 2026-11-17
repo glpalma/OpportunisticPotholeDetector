@@ -1,0 +1,56 @@
+# Local POC stack: Caddy serves the Angular dashboard and proxies the API.
+# From the repo root: docker compose up --build
+# Dashboard: http://localhost/   API key default: local-dev-key
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: pothole
+      POSTGRES_PASSWORD: pothole
+      POSTGRES_DB: pothole
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pothole -d pothole"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pothole
+      SPRING_DATASOURCE_USERNAME: pothole
+      SPRING_DATASOURCE_PASSWORD: pothole
+      POTHOLE_API_KEY: ${POTHOLE_API_KEY:-local-dev-key}
+      POTHOLE_IMAGE_DIR: /data/images
+      POTHOLE_SILENCE_WINDOW_DAYS: ${POTHOLE_SILENCE_WINDOW_DAYS:-14}
+      POTHOLE_NEGLECT_WINDOW_DAYS: ${POTHOLE_NEGLECT_WINDOW_DAYS:-30}
+    volumes:
+      - images:/data/images
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  caddy:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      app:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  images:
