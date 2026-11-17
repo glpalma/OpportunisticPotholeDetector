@@ -222,6 +222,12 @@ __marimo__/
 # Java / Gradle
 backend/.gradle/
 backend/build/
+backend/bin/
+
+# Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
 
 # JetBrains
 .idea
