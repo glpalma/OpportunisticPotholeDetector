@@ -1,0 +1,68 @@
+<section class="page">
+  <div class="page-head">
+    <h1>Tabela</h1>
+    <button type="button" mat-stroked-button (click)="exportCsv()">Exportar CSV</button>
+  </div>
+  <app-filters />
+  @if (error()) {
+    <p class="error">Não foi possível carregar a tabela.</p>
+  } @else if (rows().length === 0) {
+    <p class="note">Nenhum buraco com esses filtros.</p>
+  }
+  <div class="table-wrap">
+    <table
+      mat-table
+      [dataSource]="rows()"
+      matSort
+      matSortActive="lastSeenAt"
+      matSortDirection="desc"
+      (matSortChange)="onSort($event)"
+    >
+      <ng-container matColumnDef="thumb">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          @if (thumbnailUrl(row.thumbnailSightingId); as src) {
+            <img class="thumb" [src]="src" alt="" (error)="missingThumb($event)" />
+          } @else {
+            <span class="placeholder">Imagem removida</span>
+          }
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="firstSeenAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Primeiro</th>
+        <td mat-cell *matCellDef="let row">{{ row.firstSeenAt | date: 'dd/MM/yyyy HH:mm' : 'America/Sao_Paulo' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="lastSeenAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Último</th>
+        <td mat-cell *matCellDef="let row">{{ row.lastSeenAt | date: 'dd/MM/yyyy HH:mm' : 'America/Sao_Paulo' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="sightingCount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Avistamentos</th>
+        <td mat-cell *matCellDef="let row">{{ row.sightingCount }}</td>
+      </ng-container>
+      <ng-container matColumnDef="maxConfidence">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Confiança</th>
+        <td mat-cell *matCellDef="let row">{{ confidenceLabel(row.maxConfidence) }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Situação</th>
+        <td mat-cell *matCellDef="let row">
+          <a [routerLink]="['/buracos', row.id]">{{ statusLabel(row.status, row.neglected) }}</a>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="reviewedCount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Revisão</th>
+        <td mat-cell *matCellDef="let row">{{ row.reviewedCount }}/{{ row.sightingCount }} revisados</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns"></tr>
+    </table>
+  </div>
+  <mat-paginator
+    [length]="total()"
+    [pageIndex]="page()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="[25, 50, 100]"
+    (page)="onPage($event)"
+  />
+</section>

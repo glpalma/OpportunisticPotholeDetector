@@ -1,0 +1,45 @@
+<section class="page">
+  <p class="back"><a routerLink="/">Voltar ao mapa</a></p>
+  @if (missing()) {
+    <h1>Buraco não encontrado</h1>
+  } @else if (error()) {
+    <p class="error">Não foi possível carregar o buraco.</p>
+  } @else if (pothole(); as pothole) {
+    <div class="detail-grid">
+      <app-mini-map [lat]="pothole.lat" [lon]="pothole.lon" [status]="pothole.status" [neglected]="pothole.neglected" />
+      <div>
+        <h1>{{ statusLabel(pothole.status, pothole.neglected) }}</h1>
+        <p class="lead">{{ statusExplanation(pothole.status, pothole.neglected) }}</p>
+        <dl class="facts">
+          <div><dt>Primeiro</dt><dd>{{ pothole.firstSeenAt | date: 'dd/MM/yyyy HH:mm' : 'America/Sao_Paulo' }}</dd></div>
+          <div><dt>Último</dt><dd>{{ pothole.lastSeenAt | date: 'dd/MM/yyyy HH:mm' : 'America/Sao_Paulo' }}</dd></div>
+          <div><dt>Avistamentos</dt><dd>{{ pothole.sightingCount }}</dd></div>
+          <div><dt>Confiança máx.</dt><dd>{{ confidenceLabel(pothole.maxConfidence) }}</dd></div>
+          <div><dt>Revisão</dt><dd>{{ pothole.reviewedCount }}/{{ pothole.sightingCount }} revisados</dd></div>
+        </dl>
+      </div>
+    </div>
+    <h2>Avistamentos</h2>
+    <ol class="timeline">
+      @for (sighting of pothole.sightings; track sighting.sightingId) {
+        <li>
+          <button type="button" class="timeline-item" (click)="open(sighting)">
+            @if (thumbnailUrl(sighting.sightingId); as src) {
+              <img class="thumb" [src]="src" alt="" (error)="missingThumb($event)" />
+            }
+            <span>
+              <strong>{{ sighting.capturedAt | date: 'dd/MM/yyyy HH:mm' : 'America/Sao_Paulo' }}</strong>
+              <span>
+                recebido {{ sighting.receivedAt | date: 'dd/MM/yyyy HH:mm' : 'America/Sao_Paulo' }}
+                · {{ confidenceLabel(sighting.confidence) }}
+                · {{ sighting.speed | number: '1.0-1' }} m/s
+                · GPS {{ sighting.horizontalAccuracyM | number: '1.0-1' }} m
+                · {{ reviewLabel(sighting.review) }}
+              </span>
+            </span>
+          </button>
+        </li>
+      }
+    </ol>
+  }
+</section>

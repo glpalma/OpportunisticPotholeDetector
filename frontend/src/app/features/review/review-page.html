@@ -1,0 +1,38 @@
+<section class="page review">
+  <div class="page-head">
+    <h1>Revisão</h1>
+    <p class="note">B buraco · F falso positivo · P pular · Z desfazer</p>
+  </div>
+  @if (error()) {
+    <p class="error">Não foi possível atualizar a fila.</p>
+  }
+  @if (current(); as item) {
+    <div class="review-grid">
+      <app-bbox-frame [src]="item.imageAvailable ? imageUrl(item.sightingId) : null" [bbox]="item.bbox" />
+      <aside>
+        <app-mini-map
+          [lat]="item.potholeLat"
+          [lon]="item.potholeLon"
+          [status]="item.potholeStatus"
+          [neglected]="item.potholeNeglected"
+        />
+        <p>
+          <a [routerLink]="['/buracos', item.potholeId]">{{ others(item) }} outros avistamentos neste buraco</a>
+        </p>
+        <dl class="facts">
+          <div><dt>Confiança</dt><dd>{{ confidenceLabel(item.confidence) }}</dd></div>
+          <div><dt>Velocidade</dt><dd>{{ item.speed | number: '1.0-1' }} m/s</dd></div>
+          <div><dt>GPS</dt><dd>{{ item.horizontalAccuracyM | number: '1.0-1' }} m</dd></div>
+        </dl>
+        <div class="actions">
+          <button type="button" class="action" [disabled]="busy()" (click)="mark('pothole')">É buraco <kbd>B</kbd></button>
+          <button type="button" class="action action-alt" [disabled]="busy()" (click)="mark('false_positive')">Falso positivo <kbd>F</kbd></button>
+          <button type="button" class="action action-quiet" [disabled]="busy()" (click)="skip()">Pular <kbd>P</kbd></button>
+          <button type="button" class="action action-quiet" [disabled]="busy()" (click)="undo()">Desfazer <kbd>Z</kbd></button>
+        </div>
+      </aside>
+    </div>
+  } @else if (empty()) {
+    <p class="lead">Nenhum avistamento pendente.</p>
+  }
+</section>

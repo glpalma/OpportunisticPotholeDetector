@@ -1,0 +1,47 @@
+<div class="filters search-bar">
+  <mat-form-field subscriptSizing="dynamic" appearance="outline">
+    <mat-label>Situação</mat-label>
+    <mat-select [value]="filters.situation()" (valueChange)="setSituation($event)">
+      <mat-option value="all">Todas</mat-option>
+      <mat-option value="open">Aberto</mat-option>
+      <mat-option value="neglected">Negligenciado</mat-option>
+      <mat-option value="fixed">Sem registro recente</mat-option>
+      <mat-option value="resunk">Reaberto</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field subscriptSizing="dynamic" appearance="outline">
+    <mat-label>Último avistamento de</mat-label>
+    <input matInput type="datetime-local" [value]="filters.from()" (change)="setFrom($event)" />
+  </mat-form-field>
+
+  <mat-form-field subscriptSizing="dynamic" appearance="outline">
+    <mat-label>até</mat-label>
+    <input matInput type="datetime-local" [value]="filters.to()" (change)="setTo($event)" />
+  </mat-form-field>
+
+  <mat-form-field subscriptSizing="dynamic" appearance="outline">
+    <mat-label>Confiança mínima</mat-label>
+    <input
+      matInput
+      type="number"
+      min="0"
+      max="1"
+      step="0.05"
+      [value]="filters.minConfidence()"
+      (change)="setConfidence($event)"
+    />
+  </mat-form-field>
+
+  <div class="search-checks">
+    <mat-checkbox [checked]="filters.unreviewed()" (change)="filters.unreviewed.set($event.checked)">
+      Só com avistamentos sem revisão
+    </mat-checkbox>
+    <mat-checkbox
+      [checked]="filters.includeFalsePositives()"
+      (change)="filters.includeFalsePositives.set($event.checked)"
+    >
+      Mostrar falso positivo
+    </mat-checkbox>
+  </div>
+</div>

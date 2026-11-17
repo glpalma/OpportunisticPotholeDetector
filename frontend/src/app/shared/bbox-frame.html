@@ -1,0 +1,10 @@
+@if (failed() || !src()) {
+  <p class="placeholder">Imagem removida</p>
+} @else {
+  <div class="frame">
+    <img [src]="src()" [alt]="alt()" (load)="onLoad($event)" (error)="onError()" />
+    @if (box(); as box) {
+      <div class="bbox" [style.left]="box.left" [style.top]="box.top" [style.width]="box.width" [style.height]="box.height"></div>
+    }
+  </div>
+}

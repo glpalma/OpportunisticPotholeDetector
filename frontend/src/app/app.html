@@ -1,0 +1,13 @@
+<header class="topbar">
+  <a class="brand" routerLink="/">Detector de Buracos</a>
+  <nav>
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Mapa</a>
+    <a routerLink="/tabela" routerLinkActive="active">Tabela</a>
+    <a routerLink="/revisao" routerLinkActive="active">Revisão</a>
+  </nav>
+  <p class="bus">{{ busLabel() }}</p>
+  <button type="button" class="refresh" (click)="refreshBus.refresh()">Atualizar</button>
+</header>
+<main>
+  <router-outlet />
+</main>

@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Avistamento</h2>
+<mat-dialog-content>
+  <app-bbox-frame
+    [src]="data.sighting.imageAvailable ? imageUrl(data.sighting.sightingId) : null"
+    [bbox]="data.sighting.bbox"
+  />
+  <dl class="facts">
+    <div><dt>Capturado</dt><dd>{{ data.sighting.capturedAt | date: 'dd/MM/yyyy HH:mm' : 'America/Sao_Paulo' }}</dd></div>
+    <div><dt>Recebido</dt><dd>{{ data.sighting.receivedAt | date: 'dd/MM/yyyy HH:mm' : 'America/Sao_Paulo' }}</dd></div>
+    <div><dt>Confiança</dt><dd>{{ confidenceLabel(data.sighting.confidence) }}</dd></div>
+    <div><dt>Velocidade</dt><dd>{{ data.sighting.speed | number: '1.0-1' }} m/s</dd></div>
+    <div><dt>GPS</dt><dd>{{ data.sighting.horizontalAccuracyM | number: '1.0-1' }} m</dd></div>
+    <div><dt>Revisão</dt><dd>{{ reviewLabel(data.sighting.review) }}</dd></div>
+  </dl>
+  @if (error()) {
+    <p class="error">Não foi possível gravar a revisão.</p>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button type="button" class="action" [disabled]="busy()" (click)="mark('pothole')">É buraco</button>
+  <button type="button" class="action action-alt" [disabled]="busy()" (click)="mark('false_positive')">Falso positivo</button>
+  <button type="button" class="action action-quiet" [disabled]="busy()" (click)="mark(null)">Limpar</button>
+</mat-dialog-actions>

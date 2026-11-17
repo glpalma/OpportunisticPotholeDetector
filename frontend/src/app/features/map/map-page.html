@@ -1,0 +1,26 @@
+<section class="map-page">
+  <div #canvas class="map-canvas"></div>
+  <div class="map-hud">
+    @if (stats(); as stats) {
+      <div class="stats">
+        <p><span>{{ stats.open }}</span> abertos</p>
+        <p><span>{{ stats.neglected }}</span> negligenciados</p>
+        <p><span>{{ stats.fixed }}</span> sem registro recente</p>
+        <p><span>{{ stats.resunk }}</span> reabertos</p>
+        <p><span>{{ stats.sightingsReviewed }}</span> revisados</p>
+        <p><span>{{ stats.sightingsPending }}</span> pendentes</p>
+        <p><span>{{ precision(stats.detectorPrecision) }}</span> precisão</p>
+      </div>
+    }
+    <app-filters />
+    <ul class="legend">
+      <li><i class="swatch open"></i> Aberto</li>
+      <li><i class="swatch neglected"></i> Negligenciado</li>
+      <li><i class="swatch fixed"></i> Sem registro recente</li>
+      <li><i class="swatch resunk"></i> Reaberto</li>
+    </ul>
+    @if (error()) {
+      <p class="error">Não foi possível carregar o mapa.</p>
+    }
+  </div>
+</section>
