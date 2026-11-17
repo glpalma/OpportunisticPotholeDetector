@@ -15,6 +15,8 @@ server:
 pothole:
   api-key: ${POTHOLE_API_KEY:}
   image-dir: ${POTHOLE_IMAGE_DIR:${java.io.tmpdir}/pothole-images}
+  silence-window-days: ${POTHOLE_SILENCE_WINDOW_DAYS:14}
+  neglect-window-days: ${POTHOLE_NEGLECT_WINDOW_DAYS:30}
   image:
     max-bytes: 3145728
   rate-limit:

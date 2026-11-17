@@ -21,4 +21,14 @@ class PotholeConfigurationGuardTest {
 
         assertDoesNotThrow(() -> new PotholeConfigurationGuard(properties));
     }
+
+    @Test
+    void silenceWindowMustBeShorterThanNeglectWindow() {
+        PotholeProperties properties = new PotholeProperties();
+        properties.setApiKey("test-key");
+        properties.setSilenceWindowDays(30);
+        properties.setNeglectWindowDays(30);
+
+        assertThrows(IllegalStateException.class, () -> new PotholeConfigurationGuard(properties));
+    }
 }

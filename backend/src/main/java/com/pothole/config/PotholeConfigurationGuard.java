@@ -18,5 +18,12 @@ class PotholeConfigurationGuard {
                 || rateLimit.getAuthFailuresPerMinute() <= 0) {
             throw new IllegalStateException("pothole.rate-limit values must be positive");
         }
+        if (properties.getSilenceWindowDays() <= 0 || properties.getNeglectWindowDays() <= 0) {
+            throw new IllegalStateException("pothole silence and neglect windows must be positive");
+        }
+        if (properties.getSilenceWindowDays() >= properties.getNeglectWindowDays()) {
+            throw new IllegalStateException(
+                    "pothole.silence-window-days must be shorter than pothole.neglect-window-days");
+        }
     }
 }

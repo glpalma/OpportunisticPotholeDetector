@@ -9,6 +9,10 @@ public class PotholeProperties {
 
     private String imageDir = System.getProperty("java.io.tmpdir") + "/pothole-images";
 
+    private int silenceWindowDays = 14;
+
+    private int neglectWindowDays = 30;
+
     private final Image image = new Image();
 
     private final RateLimit rateLimit = new RateLimit();
@@ -35,6 +39,22 @@ public class PotholeProperties {
 
     public RateLimit getRateLimit() {
         return rateLimit;
+    }
+
+    public int getSilenceWindowDays() {
+        return silenceWindowDays;
+    }
+
+    public void setSilenceWindowDays(int silenceWindowDays) {
+        this.silenceWindowDays = silenceWindowDays;
+    }
+
+    public int getNeglectWindowDays() {
+        return neglectWindowDays;
+    }
+
+    public void setNeglectWindowDays(int neglectWindowDays) {
+        this.neglectWindowDays = neglectWindowDays;
     }
 
     public static class Image {
